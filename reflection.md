@@ -46,7 +46,9 @@ Three core actions the user should be able to perform:
 **a. How you used AI**
 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
+    - I used AI for the UML diagream creation, some designing, debugging, and a lot of the implementation.
 - What kinds of prompts or questions were most helpful?
+    - I asked clarifying questions to understand the code it generated. During the planning phase, I found it helpful to be specific on what I wanted and how I wanted the classes to be organized.
 
 **b. Judgment and verification**
 
@@ -65,7 +67,9 @@ Three core actions the user should be able to perform:
 **b. Confidence**
 
 - How confident are you that your scheduler works correctly?
+    - I am very confident in the scheduler's ability to work correctly. 5 stars
 - What edge cases would you test next if you had more time?
+    - I didn't test different time zones.
 
 ---
 

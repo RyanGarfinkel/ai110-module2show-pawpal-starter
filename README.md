@@ -30,6 +30,20 @@ The PawPal+ system now includes advanced scheduling algorithms to make pet care 
 - **Recurring Task Automation**: Checking off daily or weekly tasks doesn't just complete them; algorithms calculate and clone the task directly into the scheduler for the next occurrence using `timedelta`.
 - **Conflict Detection**: A lightweight time mapper prevents double-booking by warning the user if two tasks share the exact same start time.
 
+## Testing PawPal+
+
+This project is backed by a robust suite of unit tests utilizing the python `pytest` library! To verify the system's logic algorithms are behaving correctly natively inside your terminal, run:
+```bash
+python -m pytest tests/test_pawpal.py
+```
+
+**Test Coverage:**
+- **Task Completion Status (`test_task_completion`)**: Verifies boolean completeness states alter and are returned truthfully.
+- **Pet Filtering (`test_task_addition_to_scheduler`)**: Assures the central master scheduler can divide huge datasets logically by pet UUIDs.
+- **Algorithm Correctness (`test_sorting_correctness`)**: Manually inserts tasks erratically, expecting the system to reorganize them correctly from earliest to latest. 
+- **Recurrence Automation (`test_recurrence_logic`)**: Asserts that sending a 'completion' pulse for a Daily task automatically clones a new task +1 exact day apart into the vault.
+- **Conflict Checking (`test_conflict_detection`)**: Spoofs a multi-booking to ensure the mapper catches duplicate time slots and issues the correct diagnostic warnings.
+
 ## Getting started
 
 ### Setup
