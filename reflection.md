@@ -11,11 +11,14 @@ Three core actions the user should be able to perform:
 **a. Initial design**
 
 - Briefly describe your initial UML design.
+    - The inital UML design was designed around core actions around pets and tasks. Tasks and appointments can be scheuled. Pets are handeld by Owners.
 - What classes did you include, and what responsibilities did you assign to each?
+    - I chose to include a Task, Pet, Appointment, Scheduler, and Owner classes. The pet class contains logic only about that pet. The task class contains data and logic for that one task. The appointment class holds data for that one appointment and can be rescheduled. The Scheduler holds lists of tasks and appointments and can retrieve upcoming events and filter by a pet. The owner controls a list of pets.
 
 **b. Design changes**
 
 - Did your design change during implementation?
+    - My design did not change. When designing the UML, I was clear in my prompting of what I wanted to see happen.
 - If yes, describe at least one change and why you made it.
 
 ---
