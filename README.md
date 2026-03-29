@@ -22,6 +22,14 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
+## Smarter Scheduling
+
+The PawPal+ system now includes advanced scheduling algorithms to make pet care even easier:
+- **Chronological Sorting**: Tasks and appointments are automatically sorted by their due date/time using Python's `sorted()` function and lambda keys.
+- **Smart Filtering**: Custom filters allow the schedule to isolate tasks for a specific pet or by complete/pending statuses instantly.
+- **Recurring Task Automation**: Checking off daily or weekly tasks doesn't just complete them; algorithms calculate and clone the task directly into the scheduler for the next occurrence using `timedelta`.
+- **Conflict Detection**: A lightweight time mapper prevents double-booking by warning the user if two tasks share the exact same start time.
+
 ## Getting started
 
 ### Setup

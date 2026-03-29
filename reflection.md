@@ -28,12 +28,16 @@ Three core actions the user should be able to perform:
 **a. Constraints and priorities**
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
+    - The scheduler considers completion status and time overlap.
 - How did you decide which constraints mattered most?
+    - It seemed more natural to me to only consider completion status and time overlaps, as someone cannot do 2 tasks at once and normally new tasks are created if something needs to be redone. Scheuling based on priority would have created another dimension of complexity.
 
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
+    - The conflict detection only checks if two tasks have the exact same start time, rather than checking if their total durations overlap.
 - Why is that tradeoff reasonable for this scenario?
+    - For a simple pet scheduler, alerting the user only when they schedule two things to start at the exact same minute is enough of a warning mechanism without making the code overly complex.
 
 ---
 

@@ -40,49 +40,78 @@ def main():
     time1 = today.replace(hour=8, minute=0, second=0, microsecond=0)
     time2 = today.replace(hour=13, minute=0, second=0, microsecond=0)
     time3 = today.replace(hour=18, minute=30, second=0, microsecond=0)
+    
+    # Intentionally duplicate time3 for a conflict test
+    time4 = time3
 
-    # Add at least three Tasks with different times
+    # Add at least three Tasks with different times, intentionally inserted OUT OF ORDER
     task1 = Task(
         task_id="T001",
         pet_id=buddy_id,
-        description="Morning Walk",
-        due_date_time=time1,
-        task_type="Walking"
+        description="Evening Walk and Play",
+        due_date_time=time3, # Late time
+        task_type="Activity",
+        frequency="Daily" # Note the recurring property
     )
     
     task2 = Task(
         task_id="T002",
         pet_id=luna_id,
-        description="Afternoon Feeding",
-        due_date_time=time2,
+        description="Morning Feeding",
+        due_date_time=time1, # Early time
         task_type="Feeding"
     )
     
     task3 = Task(
         task_id="T003",
         pet_id=buddy_id,
-        description="Evening Walk and Play",
-        due_date_time=time3,
-        task_type="Activity"
+        description="Afternoon Walk",
+        due_date_time=time2, # Middle time
+        task_type="Walking"
+    )
+    
+    task4 = Task(
+        task_id="T004",
+        pet_id=luna_id,
+        description="Evening Grooming (CONFLICT)",
+        due_date_time=time4, # Same exact time as task1
+        task_type="Grooming"
     )
 
-    # Insert tasks into the scheduler
-    scheduler.tasks.extend([task1, task2, task3])
+    # Insert tasks into the scheduler raw
+    scheduler.tasks.extend([task1, task2, task3, task4])
+
+    print("\n=== Testing Sorting ===")
+    sorted_tasks = scheduler.sort_tasks_by_time(scheduler.tasks)
+    for t in sorted_tasks:
+        print(f"[{t.due_date_time.strftime('%I:%M %p')}] {t.description}")
+        
+    print("\n=== Testing Conflict Detection ===")
+    conflicts = scheduler.detect_conflicts()
+    for warning in conflicts:
+        print(f"⚠️  {warning}")
+        
+    print("\n=== Testing Recurring Automation ===")
+    print("Marking the Daily 'Evening Walk and Play' as complete...")
+    scheduler.complete_task("T001")
+    
+    # We should now see a new task added tomorrow!
+    new_recurring_task = scheduler.tasks[-1]
+    print(f"Total tasks in scheduler is now: {len(scheduler.tasks)}")
+    print(f"Next iteration created for: {new_recurring_task.due_date_time.strftime('%Y-%m-%d %I:%M %p')}")
 
     # 4. Print "Today's Schedule" to the terminal
-    print("\n=== Today's Schedule ===")
-    schedule = scheduler.get_daily_schedule(today.date())
+    print("\n=== Today's Schedule (Filtered for Pending Options) ===")
+    pending_tasks_today = scheduler.filter_tasks(status="Pending")
     
-    # Check if there are tasks or appointments
-    if not schedule['tasks'] and not schedule['appointments']:
-        print("No tasks or appointments scheduled for today.")
+    if not pending_tasks_today:
+        print("No pending tasks scheduled for today.")
     else:
         # Print all tasks
-        for task in schedule['tasks']:
+        for task in scheduler.sort_tasks_by_time(pending_tasks_today):
             # Find the pet name associated with the task
             pet_name = next((p.name for p in pets if p.pet_id == task.pet_id), "Unknown")
-            status = task.get_status()
-            print(f"[{task.due_date_time.strftime('%I:%M %p')}] {pet_name} - {task.task_type}: {task.description} ({status})")
+            print(f"[{task.due_date_time.strftime('%I:%M %p')}] {pet_name} - {task.task_type}: {task.description}")
 
 if __name__ == "__main__":
     main()
