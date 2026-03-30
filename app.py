@@ -96,7 +96,11 @@ else:
     with col1:
         task_title = st.text_input("Task description", value="Morning walk")
     with col2:
-        task_type = st.selectbox("Type", ["Walking", "Feeding", "Medication", "Grooming", "Other"])
+        col2_1, col2_2 = st.columns(2)
+        with col2_1:
+            task_type = st.selectbox("Type", ["Walking", "Feeding", "Medication", "Grooming", "Other"])
+        with col2_2:
+            frequency = st.selectbox("Freq", ["Once", "Daily", "Weekly"])
     with col3:
         # Create a dropdown mapping pet names to IDs
         pet_options = {pet.name: pet.pet_id for pet in all_pets}
@@ -116,33 +120,61 @@ else:
             pet_id=selected_pet_id,
             description=task_title,
             due_date_time=due_time,
-            task_type=task_type
+            task_type=task_type,
+            frequency=frequency
         )
         st.session_state.scheduler.tasks.append(new_task)
-        st.success(f"Added task: {task_title} for {selected_pet_name}")
+        st.success(f"Added {frequency} task: '{task_title}' for {selected_pet_name}!")
+        
+        # Check for conflicts proactively using our backend algorithm
+        conflicts = st.session_state.scheduler.detect_conflicts()
+        for warning in conflicts:
+            st.error(f"🚨 {warning}")
 
 if st.session_state.scheduler.tasks:
     st.write("**Current Tasks:**")
-    for t in st.session_state.scheduler.tasks:
+    
+    # Render with interactive complete buttons
+    for t in st.session_state.scheduler.sort_tasks_by_time(st.session_state.scheduler.tasks):
         target_pet = next((p.name for p in all_pets if p.pet_id == t.pet_id), "Unknown")
-        st.write(f"- **{t.task_type}**: {t.description} (*{target_pet}*) - Due: {t.due_date_time.strftime('%b %d %I:%M %p')} - Status: {t.get_status()}")
+        
+        status_color = "🟢" if t.get_status() == "Completed" else "🟡" if t.get_status() == "Pending" else "🔴"
+        
+        col_disp, col_btn = st.columns([4, 1])
+        with col_disp:
+            st.write(f"{status_color} **{t.task_type}**: {t.description} (*{target_pet}*) - Due: {t.due_date_time.strftime('%b %d %I:%M %p')}")
+        with col_btn:
+            if t.get_status() != "Completed":
+                if st.button("Complete", key=t.task_id):
+                    st.session_state.scheduler.complete_task(t.task_id)
+                    st.rerun()
+
 else:
     st.info("No tasks yet. Add one above.")
 
 st.divider()
 
-st.subheader("3. Today's Schedule")
+st.subheader("3. Today's Plan (Filtered View)")
 
-if st.button("View Today's Plan"):
+# Use the filter algorithm to only show Pending/Overdue tasks assigned for today
+if st.button("View Today's Active Schedule"):
     today = datetime.now().date()
-    schedule = st.session_state.scheduler.get_daily_schedule(today)
+    # Filter using our custom status logic natively built in Phase 3
+    daily_pending = [t for t in st.session_state.scheduler.filter_tasks(status="Pending") if t.due_date_time.date() == today]
+    daily_overdue = [t for t in st.session_state.scheduler.filter_tasks(status="Overdue") if t.due_date_time.date() == today]
     
-    st.write(f"### Plan for {today.strftime('%B %d, %Y')}")
+    tasks_today = daily_pending + daily_overdue
     
-    tasks_today = schedule["tasks"]
+    st.markdown(f"### Priority Active View for {today.strftime('%B %d, %Y')}")
+    
     if not tasks_today:
-        st.write("No tasks scheduled for today.")
+        st.success("You are all caught up for today! No active tasks pending.")
     else:
-        for t in tasks_today:
+        # Pass the tasks out through our manual sorter
+        for t in st.session_state.scheduler.sort_tasks_by_time(tasks_today):
             target_pet = next((p.name for p in all_pets if p.pet_id == t.pet_id), "Unknown")
-            st.write(f"- ⏳ [{t.due_date_time.strftime('%I:%M %p')}] {target_pet} ({t.task_type}): {t.description} - {t.get_status()}")
+            
+            if t.get_status() == "Overdue":
+                st.error(f"⌛ [{t.due_date_time.strftime('%I:%M %p')}] {target_pet} ({t.task_type}): {t.description} - OVERDUE")
+            else:
+                st.info(f"⏳ [{t.due_date_time.strftime('%I:%M %p')}] {target_pet} ({t.task_type}): {t.description} - PENDING")

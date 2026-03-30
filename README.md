@@ -26,9 +26,10 @@ Your final app should:
 
 The PawPal+ system now includes advanced scheduling algorithms to make pet care even easier:
 - **Chronological Sorting**: Tasks and appointments are automatically sorted by their due date/time using Python's `sorted()` function and lambda keys.
-- **Smart Filtering**: Custom filters allow the schedule to isolate tasks for a specific pet or by complete/pending statuses instantly.
+- **Smart Filtering**: Custom filters allow the schedule to isolate tasks for a specific pet or by complete/pending statuses instantly. The UI uses this to show a "Priority Active View".
 - **Recurring Task Automation**: Checking off daily or weekly tasks doesn't just complete them; algorithms calculate and clone the task directly into the scheduler for the next occurrence using `timedelta`.
-- **Conflict Detection**: A lightweight time mapper prevents double-booking by warning the user if two tasks share the exact same start time.
+- **Conflict Warnings**: A lightweight time mapper prevents double-booking by flashing real-time warning alerts (`st.error`) inside the UI if two tasks share the exact same start time.
+- **Dynamic State Formatting**: Displays change dynamically based on algorithms processing deadlines against `datetime.now()`, using color-coated emoji states.
 
 ## Testing PawPal+
 
@@ -53,6 +54,10 @@ python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
+
+## Demo
+
+<img src="demo.png" alt="PawPal+ Demo" width="500"/>
 
 ### Suggested workflow
 

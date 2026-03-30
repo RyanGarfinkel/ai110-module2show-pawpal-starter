@@ -62,7 +62,9 @@ Three core actions the user should be able to perform:
 **a. What you tested**
 
 - What behaviors did you test?
+    - I tested task completion status updates, pet filtering, recursive automation creation, sorting, and conflict warnings.
 - Why were these tests important?
+    - These tests were important to ensure the logic worked before spending time connecting everything to the frontend.
 
 **b. Confidence**
 
@@ -78,11 +80,14 @@ Three core actions the user should be able to perform:
 **a. What went well**
 
 - What part of this project are you most satisfied with?
+    - First planning with the UML diagram made copilot's suggestions/edits better with less attempts of reprompting.
 
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
+    - With more time, I would have tried persisting the data.
 
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+    - It is good to plan first before letting copiolot start editing. It will save time and help both the developer and agent know what is in the code.
